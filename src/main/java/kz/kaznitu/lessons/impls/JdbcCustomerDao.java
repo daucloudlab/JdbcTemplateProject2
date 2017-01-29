@@ -27,7 +27,20 @@ public class JdbcCustomerDao implements CustomerDao{
 
     }
 
-    public Customer findCustomerById(final int custId) {
+    public Customer findCustomerById(final int custId){
+        String sql = "SELECT * FROM customer WHERE cust_id = ?" ;
+        return jdbcTemplate.queryForObject(sql, new Object[]{custId}, new RowMapper<Customer>() {
+            public Customer mapRow(ResultSet resultSet, int i) throws SQLException {
+                Customer customer = new Customer() ;
+                customer.setCustId(resultSet.getInt("cust_id"));
+                customer.setName(resultSet.getString("name"));
+                customer.setAge(resultSet.getInt("age"));
+                return customer;
+            }
+        });
+    }
+
+    public Customer findCustomerById2(final int custId) {
         String sql = "SELECT * FROM customer WHERE cust_id = ?" ;
         return jdbcTemplate.query(sql, new Object[]{custId}, new ResultSetExtractor<Customer>() {
             public Customer extractData(ResultSet resultSet) throws SQLException, DataAccessException {
@@ -42,4 +55,6 @@ public class JdbcCustomerDao implements CustomerDao{
             }
         }) ;
     }
+
+
 }
